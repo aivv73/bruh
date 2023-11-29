@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Car Rental Service</title>
+    <title>Register - Car Rental Service</title>
 </head>
 <body>
     <header>
-        <h1>Login to Car Rental Service</h1>
+        <h1>Create an Account</h1>
         <a href="index.html">Back</a>
-        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
     </header>
 
     <main>
-        <section class="login-form">
-            <h2>Login</h2>
-            <!-- Add your login form here -->
-            <form action="login_process.php" method="post">
+        <section class="register-form">
+            <h2>Register</h2>
+            <!-- Add your registration form here -->
+            <form action="register_process.php" method="post">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
 
-                <button type="submit">Login</button>
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+
+                <button type="submit">Register</button>
             </form>
         </section>
     </main>

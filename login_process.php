@@ -1,23 +1,31 @@
 <?php
-// Check if the form is submitted
+include('connection.php');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve user inputs from the form
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    // Replace this with your actual authentication logic
-    // In a real-world scenario, you would check the user credentials against a database
-    $validUsername = "example_user";
-    $validPassword = "example_password";
+    // To prevent SQL injection
+    $username = stripcslashes($username);
+    $password = stripcslashes($password);
+    $username = mysqli_real_escape_string($con, $username);
+    $password = mysqli_real_escape_string($con, $password);
+    $password_hash = md5($password);
+
+    $sql = "SELECT * FROM login WHERE username = '$username' AND password_hash = '$password_hash'";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    $count = mysqli_num_rows($result);
 
     // Check if the provided credentials are valid
-    if ($username === $validUsername && $password === $validPassword) {
+    if ($count == 1) {
         // Authentication successful, redirect to a dashboard or main page
-        header("Location: dashboard.php");
+        header("Location: test.php");
         exit();
     } else {
         // Authentication failed, redirect back to the login page with an error message
-        header("Location: login.html?error=1");
+        echo "<h1> Login failed. Invalid username or password.</h1>";  
         exit();
     }
 } else {
