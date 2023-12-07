@@ -1,5 +1,6 @@
 <?php
 include('connection.php');
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve user inputs from the form
@@ -20,12 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if the provided credentials are valid
     if ($count == 1) {
-        // Authentication successful, redirect to a dashboard or main page
-        header("Location: test.php");
+        // Authentication successful, set session variable and redirect
+        $_SESSION['username'] = $username;
+        header("Location: index.php");
         exit();
     } else {
-        // Authentication failed, redirect back to the login page with an error message
-        echo "<h1> Login failed. Invalid username or password.</h1>";  
+        // Handle unsuccessful login
+        header("Location: login.html?error=1");
         exit();
     }
 } else {
