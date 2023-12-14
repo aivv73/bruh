@@ -28,7 +28,25 @@
 
                 <label for="dropoffDateTime">Drop-off Date and Time:</label>
                 <input type="datetime-local" id="dropoffDateTime" name="dropoffDateTime" required>
+                <label for="cars">Choose a car:</label>
+                <select id="cars" name="selectedCar">
+                    <?php
+                    // Include your database connection code
+                    include('connection.php');
 
+                    // Fetch data from the database
+                    $sql = "SELECT car_name FROM cars";
+                    $result = mysqli_query($con, $sql);
+
+                    // Populate dropdown options
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<option value="' . $row['car_name'] . '">' . $row['car_name'] . '</option>';
+                    }
+
+                    // Close the database connection
+                    mysqli_close($con);
+                    ?>
+                </select>
                 <button type="submit">Submit</button>
             </form>
             <?php
@@ -37,6 +55,7 @@
         }
         ?>
     </main>
+
 
     <footer>
         <p>&copy; 2023 Car Rental Service</p>
