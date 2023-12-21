@@ -5,17 +5,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['username'])) {
     // Retrieve form inputs
     $pickupLocation = $_POST["pickupLocation"];
     $pickupDateTime = strtotime($_POST["pickupDateTime"]);
-    $pickupDateTime = date('Y-m-d H:i:s',  $pickupDateTime);
+    $differentDropoff = $_POST["differentDropoff"];
+    $dropoffLocation = $_POST["dropoffLocation"];
+
     $dropoffDateTime = strtotime($_POST["dropoffDateTime"]);
-    $dropoffDateTime = date('Y-m-d H:i:s',  $dropoffDateTime);
     $selectedCar = $_POST["selectedCar"];
+
+    // Calculate the number of days the car will be rented
+    $rentalDays = floor(($dropoffDateTime - $pickupDateTime) / (60 * 60 * 24));
 
     // Include your database connection code
     include('connection.php');
 
     // Insert the rental information into the rentals table
-    $insertQuery = "INSERT INTO rentals (username, pickup_location, pickup_datetime, dropoff_datetime, selected_car)
-                    VALUES ('{$_SESSION['username']}', '$pickupLocation', '$pickupDateTime', '$dropoffDateTime', '$selectedCar')";
+    $insertQuery = "INSERT INTO rentals (username, pickup_location, dropoff_location, pickup_datetime, dropoff_datetime, selected_car, different_dropoff, rental_days)
+                    VALUES ('{$_SESSION['username']}', '$pickupLocation', '$dropoffLocation', FROM_UNIXTIME($pickupDateTime), FROM_UNIXTIME($dropoffDateTime), '$selectedCar', '$differentDropoff','$rentalDays')";
 
     if (mysqli_query($con, $insertQuery)) {
         echo "Rental information successfully submitted!";
