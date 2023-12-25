@@ -147,7 +147,7 @@ else
                     if (isset($_SESSION['username']) and $role == 1) {
                         // The user is an administrator.
                         // Get the user's rental history from the database
-                        $getRentalsQuery = 'SELECT * FROM rentals ORDER BY status DESC, dropoff_datetime DESC';
+                        $getRentalsQuery = 'SELECT * FROM rentals ORDER BY dropoff_datetime DESC';
                         $rentalsResult = mysqli_query($con, $getRentalsQuery);
 
                         // Check if the query was successful
@@ -156,33 +156,57 @@ else
                             $rentals = mysqli_fetch_all($rentalsResult, MYSQLI_ASSOC);
 
                             // Join the rentals table with the cars table
-                            $joinQuery = 'SELECT rentals.*, cars.car_name, cars.rental_rate FROM rentals JOIN cars ON rentals.car_id = cars.id';
+                            $joinQuery = "SELECT rentals.*, cars.car_name, cars.rental_rate FROM rentals JOIN cars ON rentals.car_id = cars.id";
                             $joinResult = mysqli_query($con, $joinQuery);
 
                             // Check if the join query was successful
                             if ($joinResult) {
                                 // Fetch the results as an associative array
                                 $rentals = mysqli_fetch_all($joinResult, MYSQLI_ASSOC);
-                                        
-                                echo '<div class="container mt-4">';
-                                echo '<h3>Rental History:</h3>';
-                                foreach ($rentals as $rental) {
-                                    $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
+                                // Separate rentals based on status
+                                $expiredRentals = [];
+                                $activeRentals = [];
+                                $returnedRentals = [];
 
-                                    echo '<div class="card mt-3">';
-                                    echo '<div class="card-body">';
+                                foreach ($rentals as $rental) {
+                                    switch ($rental['status']) {
+                                        case 'expired':
+                                            $expiredRentals[] = $rental;
+                                            break;
+                                        case 'active':
+                                            $activeRentals[] = $rental;
+                                            break;
+                                        case 'returned':
+                                            $returnedRentals[] = $rental;
+                                            break;
+                                    }
+                                }
+
+                                // Merge the arrays in the desired order
+                                $sortedRentals = array_merge($expiredRentals, $activeRentals, $returnedRentals);
+
+                                echo '<div class="container mt-4">';
+
+                                foreach ($sortedRentals as $rental) {
+
+                                    $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
+                                    $isExpired = ($rental['status'] === 'expired');
+                                    $cardClass = $isExpired ? 'bg-warning' : '';
+                                    $liClass = $isExpired ? 'bg-warning' : '';
+                                    echo '<div class="card mt-3 ' . $cardClass . '">';
+                                    echo '<div class="card-body ">';
                                     
                                     echo '<h5 class="card-title">Rental Details</h5>';
-                                    echo '<ul class="list-group list-group-flush">';
-                                    echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
-                                    echo "<li class='list-group-item'>Username: {$rental['username']}</li>";
-                                    echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
-                                    echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
-                                    echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
-                                    echo "<li class='list-group-item'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
-                                    echo "<li class='list-group-item'>Car name: {$rental['car_name']}</li>";
-                                    echo "<li class='list-group-item'>Rental days: {$rental['rental_days']}</li>";
-                                    echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
+                                    echo '<ul class="list-group list-group-flush ">';
+                                    echo "<li class='list-group-item " . $liClass . "'>Status: {$rental['status']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Username: {$rental['username']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Pickup location: {$rental['pickup_location']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Dropoff location: {$rental['dropoff_location']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Pickup date and time: {$rental['pickup_datetime']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Car name: {$rental['car_name']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Rental days: {$rental['rental_days']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Total rent cost: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
                                     if ($rental['status'] != 'returned') {
@@ -231,7 +255,7 @@ else
                     } else if (isset($_SESSION['username'])) {
                         // The user is not an administrator.
                         // Get the user's rental history from the database
-                        $getRentalsQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']} ' ORDER BY status DESC, dropoff_datetime DESC";
+                        $getRentalsQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']} ' ORDER BY dropoff_datetime DESC";
                         $rentalsResult = mysqli_query($con, $getRentalsQuery);
 
                         // Check if the query was successful
@@ -250,7 +274,30 @@ else
 
                                 echo '<div class="container mt-4">';
                                 echo '<h3>Rental History:</h3>';
+
+                                // Separate rentals based on status
+                                $expiredRentals = [];
+                                $activeRentals = [];
+                                $returnedRentals = [];
+
                                 foreach ($rentals as $rental) {
+                                    switch ($rental['status']) {
+                                        case 'expired':
+                                            $expiredRentals[] = $rental;
+                                            break;
+                                        case 'active':
+                                            $activeRentals[] = $rental;
+                                            break;
+                                        case 'returned':
+                                            $returnedRentals[] = $rental;
+                                            break;
+                                    }
+                                }
+
+                                // Merge the arrays in the desired order
+                                $sortedRentals = array_merge($expiredRentals, $activeRentals, $returnedRentals);
+
+                                foreach ($sortedRentals as $rental) {
                                     $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
                                     $isExpired = ($rental['status'] === 'expired');
 
