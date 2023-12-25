@@ -30,6 +30,15 @@
         session_start();
         $role = $_SESSION['role'];
 
+        include ('connection.php');
+
+        $checkExpiredQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']}' AND status = 'expired'";
+        $expiredResult = mysqli_query($con, $checkExpiredQuery);
+
+        if ($expiredResult && mysqli_num_rows($expiredResult) > 0) {
+            echo '<div class="alert alert-warning" role="alert">You have expired rentals. Please check your rental history.</div>';
+        }
+
         if (isset($_SESSION['username']) and ($role == 0)) {
             ?>
             <form action="car_selection.php" method="post">
@@ -103,11 +112,13 @@
                     // Include your database connection code
                     include ('connection.php');
 
+
+
                     // Check if the role is equal to 1.
                     if (isset($_SESSION['username']) and $role == 1) {
                         // The user is an administrator.
                         // Get the user's rental history from the database
-                        $getRentalsQuery = 'SELECT * FROM rentals';
+                        $getRentalsQuery = 'SELECT * FROM rentals ORDER BY status DESC, dropoff_datetime DESC';
                         $rentalsResult = mysqli_query($con, $getRentalsQuery);
 
                         // Check if the query was successful
@@ -145,6 +156,38 @@
                                     echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
+
+                                    if ($rental['status'] != 'returned') {
+                                        // Button to mark the rental as returned
+                                        echo '<form action="update_status.php" method="post" class="mt-3">';
+                                        echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
+                                        echo '<button type="submit" class="btn btn-primary">Mark as Returned</button>';
+                                        echo '</form>';
+                                    } 
+                                    // Button to delete the rental
+                                    echo '<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Rental</button>';
+                                    // Delete Modal
+                                    echo '<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">';
+                                    echo '<div class="modal-dialog">';
+                                    echo '<div class="modal-content">';
+                                    echo '<div class="modal-header">';
+                                    echo '<h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>';
+                                    echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+                                    echo '</div>';
+                                    echo '<div class="modal-body">';
+                                    echo '<p>Are you sure you want to delete this rental?</p>';
+                                    echo '</div>';
+                                    echo '<div class="modal-footer">';
+                                    echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
+                                    echo '<form action="delete_rental.php" method="post">';
+                                    echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
+                                    echo '<button type="submit" class="btn btn-danger">Delete Rental</button>';
+                                    echo '</form>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                    echo '</div>';
+
                                     echo '</div>';
                                     echo '</div>';
                                 }
@@ -160,7 +203,7 @@
                     } else if (isset($_SESSION['username'])) {
                         // The user is not an administrator.
                         // Get the user's rental history from the database
-                        $getRentalsQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']}'";
+                        $getRentalsQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']} ' ORDER BY status DESC, dropoff_datetime DESC";
                         $rentalsResult = mysqli_query($con, $getRentalsQuery);
 
                         // Check if the query was successful
