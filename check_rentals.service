@@ -1,0 +1,7 @@
+# /etc/systemd/system/check_rentals.service
+[Unit]
+Description=Run check_rentals.php
+
+[Service]
+Type=simple
+ExecStart=/opt/lampp/bin/php /home/aivv/projects/bruh/check_rentals.php

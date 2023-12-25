@@ -1,0 +1,9 @@
+# /etc/systemd/system/check_rentals.timer
+[Unit]
+Description=Run check_rentals.php every minute
+
+[Timer]
+OnCalendar=*:0/1
+
+[Install]
+WantedBy=timers.target

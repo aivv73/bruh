@@ -134,6 +134,8 @@
 
                                     echo '<h5 class="card-title">Rental Details</h5>';
                                     echo '<ul class="list-group list-group-flush">';
+                                    echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
+                                    echo "<li class='list-group-item'>Username: {$rental['username']}</li>";
                                     echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
                                     echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
                                     echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
@@ -185,6 +187,7 @@
 
                                     echo '<h5 class="card-title">Rental Details</h5>';
                                     echo '<ul class="list-group list-group-flush">';
+                                    echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
                                     echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
                                     echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
                                     echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
