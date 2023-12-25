@@ -45,6 +45,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteCar'])) {
     }
 }
 
+// Check if the form is submitted for editing an existing car
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editCar'])) {
+    // Retrieve form inputs for editing
+    $carToEdit = mysqli_real_escape_string($con, $_POST['carToEdit']);
+    $newCarName = mysqli_real_escape_string($con, $_POST['new_car_name']);
+    $newRentalRate = mysqli_real_escape_string($con, $_POST['new_rental_rate']);
+    $newAvailableCars = mysqli_real_escape_string($con, $_POST['new_available_cars']);
+
+    // Update the existing car information
+    $updateQuery = "UPDATE cars SET car_name = '$newCarName', rental_rate = '$newRentalRate', available_count = $newAvailableCars WHERE car_name = '$carToEdit'";
+    
+    if (mysqli_query($con, $updateQuery)) {
+        echo "Car '$carToEdit' information updated successfully!";
+    } else {
+        echo "Error: " . mysqli_error($con);
+    }
+}
+
 // Fetch data from the database for the delete form
 $sql = "SELECT car_name FROM cars";
 $result = mysqli_query($con, $sql);
@@ -97,6 +115,8 @@ mysqli_close($con);
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo '<option value="' . $row['car_name'] . '">' . $row['car_name'] . '</option>';
                 }
+                mysqli_data_seek($result, 0);
+
                 ?>
             </select>
 
@@ -104,6 +124,31 @@ mysqli_close($con);
         </form>
     </div>
 
+    <div class="container mt-4">
+            <h2>Edit Existing Car</h2>
+            <!-- Edit Car Form -->
+            <form action="" method="post">
+                <label for="carToEdit">Select Car to Edit:</label>
+                <select id="carToEdit" name="carToEdit" required>
+                    <?php
+                    // Populate dropdown options for edit form
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<option value="' . $row['car_name'] . '">' . $row['car_name'] . '</option>';
+                    }
+                    ?>
+                </select>
+                <label for="new_car_name">New Car Name:</label>
+                <input type="text" id="new_car_name" name="new_car_name" required>
+
+                <label for="new_rental_rate">New Rental Rate:</label>
+                <input type="number" id="new_rental_rate" name="new_rental_rate" required>
+
+                <label for="new_available_cars">New Available Cars:</label>
+                <input type="number" id="new_available_cars" name="new_available_cars" required>
+
+                <button type="submit" name="editCar" class="btn btn-warning">Edit Car</button>
+            </form>
+        </div>
     <!-- Add Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </body>

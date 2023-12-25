@@ -209,13 +209,35 @@ else
                                     echo "<li class='list-group-item " . $liClass . "'>Total rent cost: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
+                                    // Assuming $rental is your rental data
                                     if ($rental['status'] != 'returned') {
-                                        // Button to mark the rental as returned
-                                        echo '<form action="update_status.php" method="post" class="mt-3">';
+                                        echo '<button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#markReturnedModal' . $rental['id'] . '">';
+                                        echo 'Mark as Returned';
+                                        echo '</button>';
+                                    
+                                        // Modal for each rental
+                                        echo '<div class="modal fade" id="markReturnedModal' . $rental['id'] . '" tabindex="-1" aria-labelledby="markReturnedModalLabel' . $rental['id'] . '" aria-hidden="true">';
+                                        echo '<div class="modal-dialog">';
+                                        echo '<div class="modal-content">';
+                                        echo '<div class="modal-header">';
+                                        echo '<h5 class="modal-title" id="markReturnedModalLabel' . $rental['id'] . '">Mark Rental as Returned</h5>';
+                                        echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+                                        echo '</div>';
+                                        echo '<div class="modal-body">';
+                                        echo '<p>Are you sure you want to mark this rental as returned?</p>';
+                                        echo '</div>';
+                                        echo '<div class="modal-footer">';
+                                        echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
+                                        echo '<form action="update_status.php" method="post">';
                                         echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
                                         echo '<button type="submit" class="btn btn-primary">Mark as Returned</button>';
                                         echo '</form>';
+                                        echo '</div>';
+                                        echo '</div>';
+                                        echo '</div>';
+                                        echo '</div>';
                                     }
+                                    
                                     // Button to delete the rental
                                     echo '<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Rental</button>';
                                     // Delete Modal
