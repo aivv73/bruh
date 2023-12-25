@@ -3,20 +3,20 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
-    header("Location: login.html"); // Redirect to login page if not logged in
-    exit();
+    header('Location: login.html');  // Redirect to login page if not logged in
+    exit ();
 }
 
 // Include your database connection code
-include('connection.php');
+include ('connection.php');
 
 // Fetch data from the database to display car choices
-$sql = "SELECT car_name FROM cars";
+$sql = 'SELECT car_name, rental_rate FROM cars';
 $result = mysqli_query($con, $sql);
 
 // Check for errors in the database query
 if (!$result) {
-    die("Database query failed: " . mysqli_error($con));
+    die ('Database query failed: ' . mysqli_error($con));
 }
 
 // Close the database connection
@@ -37,28 +37,30 @@ mysqli_close($con);
 
     <form action="rental_process.php" method="post">
         <?php
-        // Include hidden fields from the previous form
-        if (isset($_POST['pickupLocation']) && isset($_POST['pickupDateTime']) && isset($_POST['dropoffDateTime'])) {
-            echo '<input type="hidden" name="pickupLocation" value="' . $_POST['pickupLocation'] . '">';
-            echo '<input type="hidden" name="pickupDateTime" value="' . $_POST['pickupDateTime'] . '">';
-            echo '<input type="hidden" name="dropoffDateTime" value="' . $_POST['dropoffDateTime'] . '">';
-            echo '<input type="hidden" name="differentDropoff" value="0">';
-            echo '<input type="hidden" name="dropoffLocation" value="' . $_POST['pickupLocation'] . '">';
-        }
+            // Include hidden fields from the previous form
+            if (isset($_POST['pickupLocation']) && isset($_POST['pickupDateTime']) && isset($_POST['dropoffDateTime'])) {
+                echo '<input type="hidden" name="pickupLocation" value="' . $_POST['pickupLocation'] . '">';
+                echo '<input type="hidden" name="pickupDateTime" value="' . $_POST['pickupDateTime'] . '">';
+                echo '<input type="hidden" name="dropoffDateTime" value="' . $_POST['dropoffDateTime'] . '">';
+                echo '<input type="hidden" name="differentDropoff" value="0">';
+                echo '<input type="hidden" name="dropoffLocation" value="' . $_POST['pickupLocation'] . '">';
+            }
 
-        if (isset($_POST['differentDropoff']) && isset($_POST['dropoffLocation'])) {
-            echo '<input type="hidden" name="differentDropoff" value="' . $_POST['differentDropoff'] . '">';
-            echo '<input type="hidden" name="dropoffLocation" value="' . $_POST['dropoffLocation'] . '">';
-        }
+            if (isset($_POST['differentDropoff']) && isset($_POST['dropoffLocation'])) {
+                echo '<input type="hidden" name="differentDropoff" value="' . $_POST['differentDropoff'] . '">';
+                echo '<input type="hidden" name="dropoffLocation" value="' . $_POST['dropoffLocation'] . '">';
+            }
         ?>
 
         <label for="selectedCar">Select a Car:</label>
         <select id="selectedCar" name="selectedCar" required>
             <?php
-            // Populate dropdown options
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<option value="' . $row['car_name'] . '">' . $row['car_name'] . '</option>';
-            }
+                // Populate dropdown options
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $car_name = $row['car_name'];
+                    $rental_rate = $row['rental_rate'];
+                    echo '<option value="' . $car_name . '|' . $rental_rate . '">' . $car_name . ' - $' . $rental_rate . ' per day' . '</option>';
+                }
             ?>
         </select>
 
@@ -66,3 +68,4 @@ mysqli_close($con);
     </form>
 </body>
 </html>
+

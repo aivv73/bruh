@@ -1,16 +1,16 @@
 <?php
-include('connection.php');
+include ('connection.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Retrieve user inputs from the registration form
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    $confirm_password = $_POST["confirm_password"];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
     // Validate password match
     if ($password !== $confirm_password) {
-        header("Location: register.html?error=1");
-        exit();
+        header('Location: register.html?error=1');
+        exit ();
     }
 
     // To prevent SQL injection
@@ -28,16 +28,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result) {
         // Registration successful, redirect to the login page
-        header("Location: login.html");
-        exit();
+        header('Location: login.html');
+        exit ();
     } else {
         // Registration failed, redirect back to the registration page with an error message
-        header("Location: register.html?error=2");
-        exit();
+        header('Location: register.html?error=2');
+        exit ();
     }
 } else {
     // If the form is not submitted, redirect to the registration page
-    header("Location: register.html");
-    exit();
+    header('Location: register.html');
+    exit ();
 }
 ?>

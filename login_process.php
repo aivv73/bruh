@@ -1,11 +1,11 @@
 <?php
-include('connection.php');
+include ('connection.php');
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Retrieve user inputs from the form
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
     // To prevent SQL injection
     $username = stripcslashes($username);
@@ -19,20 +19,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
     $count = mysqli_num_rows($result);
 
+    $sql = "SELECT role FROM login WHERE username = '$username'";
+    $result = mysqli_query($con, $sql);
+
+    $row = mysqli_fetch_assoc($result);
+
+    $role = $row['role'];
+
     // Check if the provided credentials are valid
     if ($count == 1) {
         // Authentication successful, set session variable and redirect
         $_SESSION['username'] = $username;
-        header("Location: index.php");
-        exit();
+        $_SESSION['role'] = $role;
+        header('Location: index.php');
+        exit ();
     } else {
         // Handle unsuccessful login
-        header("Location: login.html?error=1");
-        exit();
+        header('Location: login.html?error=1');
+        exit ();
     }
 } else {
     // If the form is not submitted, redirect to the login page
-    header("Location: login.html");
-    exit();
+    header('Location: login.html');
+    exit ();
 }
 ?>

@@ -28,89 +28,199 @@
     <?php
         // Check if the user is logged in
         session_start();
-        if (isset($_SESSION['username'])) {
+        $role = $_SESSION['role'];
+
+        if (isset($_SESSION['username']) and ($role == 0)) {
             ?>
             <form action="car_selection.php" method="post">
                 <!-- Your form fields here -->
 
-                <div class="col-sm-6">
-                <label for="pickupLocation">Pick-up Location:</label>
+                <div class="container mt-5">
+    <form action="rental_process.php" method="post">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="pickupLocation" class="form-label">Pick-up Location:</label>
                 <input type="text" class="form-control" id="pickupLocation" name="pickupLocation" required>
                 <div class="invalid-feedback">
                     Valid Pick-up location is required.
                 </div>
-                </div>
+            </div>
 
-                <!-- Additional input for different drop-off location -->
-                <div class="col-sm-6" id="differentDropoffLocation">
-                    <label for="dropoffLocation">Different Drop-off Location:</label>
-                    <input type="text" class="form-control" id="dropoffLocation" name="dropoffLocation">
-                </div>
-                
+            <div class="col-md-6 mb-3">
+                <label for="differentDropoff" class="form-check-label">Specify Different Drop-off Location</label>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="1" id="differentDropoff" name="differentDropoff">
-                    <label class="form-check-label" for="differentDropoff">
-                        Specify Different Drop-off Location
-                    </label>
                 </div>
+            </div>
 
-                <script>
-                    // Function to toggle visibility of different drop-off location input
-                    function toggleDifferentDropoffLocation() {
-                        var differentDropoffLocation = document.getElementById('differentDropoffLocation');
-                        var differentDropoffCheckbox = document.getElementById('differentDropoff');
+            <div class="col-md-6 mb-3" id="differentDropoffLocation" style="display: none;">
+                <label for="dropoffLocation" class="form-label">Different Drop-off Location:</label>
+                <input type="text" class="form-control" id="dropoffLocation" name="dropoffLocation">
+            </div>
+        </div>
 
-                        // Check the initial state of the checkbox
-                        differentDropoffLocation.style.display = differentDropoffCheckbox.checked ? 'block' : 'none';
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="pickupDateTime" class="form-label">Pick-up Date and Time:</label>
+                <input type="datetime-local" class="form-control" id="pickupDateTime" name="pickupDateTime" required>
+            </div>
 
-                        // Add an event listener to the checkbox to update the input visibility
-                        differentDropoffCheckbox.addEventListener('change', function () {
-                            differentDropoffLocation.style.display = this.checked ? 'block' : 'none';
-                        });
-                    }
+            <div class="col-md-6 mb-3">
+                <label for="dropoffDateTime" class="form-label">Drop-off Date and Time:</label>
+                <input type="datetime-local" class="form-control" id="dropoffDateTime" name="dropoffDateTime" required>
+            </div>
+        </div>
 
-                    // Call the function when the page loads
-                    window.onload = toggleDifferentDropoffLocation;
-                </script>
+        <button class="btn btn-primary btn-lg" type="submit">Next: Choose a Car</button>
+    </form>
+</div>
 
+<script>
+    // Function to toggle visibility of different drop-off location input
+    function toggleDifferentDropoffLocation() {
+        var differentDropoffLocation = document.getElementById('differentDropoffLocation');
+        var differentDropoffCheckbox = document.getElementById('differentDropoff');
 
+        // Check the initial state of the checkbox
+        differentDropoffLocation.style.display = differentDropoffCheckbox.checked ? 'block' : 'none';
 
-                <label for="pickupDateTime">Pick-up Date and Time:</label>
-                <input type="datetime-local" id="pickupDateTime" name="pickupDateTime" required>
+        // Add an event listener to the checkbox to update the input visibility
+        differentDropoffCheckbox.addEventListener('change', function () {
+            differentDropoffLocation.style.display = this.checked ? 'block' : 'none';
+        });
+    }
 
-                <script>
-                // Get the current date and time in the format required by datetime-local input
-                var currentDate = new Date().toISOString().slice(0, 16);
-
-                // Set the min attribute of the pickupDateTime input to the current date and time
-                document.getElementById('pickupDateTime').min = currentDate;
-
-                // Add an event listener to pickupDateTime to update dropoffDateTime min attribute
-                document.getElementById('pickupDateTime').addEventListener('input', function() {
-                    // Get the selected date and time from pickupDateTime
-                    var selectedDateTime = document.getElementById('pickupDateTime').value;
-
-                    // Set the min attribute of dropoffDateTime to the selected date and time from pickupDateTime
-                    document.getElementById('dropoffDateTime').min = selectedDateTime;
-                });
-                </script>
-
-                <label for="dropoffDateTime">Drop-off Date and Time:</label>
-                <input type="datetime-local" id="dropoffDateTime" name="dropoffDateTime" required>
-
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Next: Choose a Car</button>
-            </form>
+    // Call the function when the page loads
+    window.onload = toggleDifferentDropoffLocation;
+</script>
 
             <?php
-        } else {
-            echo "<p>Please log in to access the car rental form.</p>";
+        } else if (!isset($_SESSION['username'])) {
+            echo '<p>Please log in to access the car rental form.</p>';
         }
-        ?>
+                    ?>
+                <?php
+                    // Include your database connection code
+                    include ('connection.php');
+
+                    // Check if the role is equal to 1.
+                    if (isset($_SESSION['username']) and $role == 1) {
+                        // The user is an administrator.
+                        // Get the user's rental history from the database
+                        $getRentalsQuery = 'SELECT * FROM rentals';
+                        $rentalsResult = mysqli_query($con, $getRentalsQuery);
+
+                        // Check if the query was successful
+                        if ($rentalsResult) {
+                            // Fetch the results as an associative array
+                            $rentals = mysqli_fetch_all($rentalsResult, MYSQLI_ASSOC);
+
+                            // Join the rentals table with the cars table
+                            $joinQuery = 'SELECT rentals.*, cars.car_name, cars.rental_rate FROM rentals JOIN cars ON rentals.car_id = cars.id';
+                            $joinResult = mysqli_query($con, $joinQuery);
+
+                            // Check if the join query was successful
+                            if ($joinResult) {
+                                // Fetch the results as an associative array
+                                $rentals = mysqli_fetch_all($joinResult, MYSQLI_ASSOC);
+
+                                echo '<div class="container mt-4">';
+                                echo '<h3>Rental History:</h3>';
+                                foreach ($rentals as $rental) {
+                                    $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
+
+                                    echo '<div class="card mt-3">';
+                                    echo '<div class="card-body">';
+
+                                    echo '<h5 class="card-title">Rental Details</h5>';
+                                    echo '<ul class="list-group list-group-flush">';
+                                    echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
+                                    echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
+                                    echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Car name: {$rental['car_name']}</li>";
+                                    echo "<li class='list-group-item'>Rental days: {$rental['rental_days']}</li>";
+                                    echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
+                                    echo '</ul>';
+
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                            } else {
+                                // Display an error message if the join query failed
+                                echo 'Error: ' . mysqli_error($con);
+                            }
+                        } else {
+                            // Display an error message if the query failed
+                            echo 'Error: ' . mysqli_error($con);
+                        }
+                    } else if (isset($_SESSION['username'])) {
+                        // The user is not an administrator.
+                        // Get the user's rental history from the database
+                        $getRentalsQuery = "SELECT * FROM rentals WHERE username = '{$_SESSION['username']}'";
+                        $rentalsResult = mysqli_query($con, $getRentalsQuery);
+
+                        // Check if the query was successful
+                        if ($rentalsResult) {
+                            // Fetch the results as an associative array
+                            $rentals = mysqli_fetch_all($rentalsResult, MYSQLI_ASSOC);
+
+                            // Join the rentals table with the cars table
+                            $joinQuery = "SELECT rentals.*, cars.car_name, cars.rental_rate FROM rentals JOIN cars ON rentals.car_id = cars.id WHERE rentals.username = '{$_SESSION['username']}'";
+                            $joinResult = mysqli_query($con, $joinQuery);
+
+                            // Check if the join query was successful
+                            if ($joinResult) {
+                                // Fetch the results as an associative array
+                                $rentals = mysqli_fetch_all($joinResult, MYSQLI_ASSOC);
+
+                                echo '<div class="container mt-4">';
+                                echo '<h3>Rental History:</h3>';
+                                foreach ($rentals as $rental) {
+                                    $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
+
+                                    echo '<div class="card mt-3">';
+                                    echo '<div class="card-body">';
+
+                                    echo '<h5 class="card-title">Rental Details</h5>';
+                                    echo '<ul class="list-group list-group-flush">';
+                                    echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
+                                    echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
+                                    echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Car name: {$rental['car_name']}</li>";
+                                    echo "<li class='list-group-item'>Rental days: {$rental['rental_days']}</li>";
+                                    echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
+                                    echo '</ul>';
+
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                            } else {
+                                // Display an error message if the join query failed
+                                echo 'Error: ' . mysqli_error($con);
+                            }
+                        } else {
+                            // Display an error message if the query failed
+                            echo 'Error: ' . mysqli_error($con);
+                        }
+
+                        // Close the database connection
+                        mysqli_close($con);
+                    }
+
+                ?>
+
     </main>
-
-
-    <footer>
-        <p>&copy; 2023 Car Rental Service</p>
-    </footer>
-</body>
+    <div class="container">
+        <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            </ul>
+            <p class="text-center text-body-secondary">© 2023 Company, Inc</p>
+        </footer>
+    </div>
+    
+    </body>
 </html>
