@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['username'])) {
             $updateCountQuery = "UPDATE cars SET available_count = available_count - 1 WHERE id = $carID";
 
             if (mysqli_query($con, $updateCountQuery)) {
-                echo 'Rental information successfully submitted!';
-                echo 'Total rent cost: $' . $totalRentCost . '<br>';
+                echo 'Бронирование произведенно успешно!';
+                echo 'Общая стоимость аренды: $' . $totalRentCost . '<br>';
             } else {
                 echo 'Error updating available_count: ' . mysqli_error($con);
             }
@@ -69,4 +69,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['username'])) {
 }
 ?>
 
-<a href="index.php" class="btn btn-primary">Go Back to Homepage</a>
+<a href="index.php" class="btn btn-primary">На стартовую страницу</a>

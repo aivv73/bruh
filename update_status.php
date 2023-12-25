@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $updateCountQuery = "UPDATE cars SET available_count = available_count + 1 WHERE id = $carID";
 
             if (mysqli_query($con, $updateCountQuery)) {
-                echo 'Rental marked as returned successfully!';
+                echo 'Аренда отмечена как успешно возвращенная!';
             } else {
                 echo 'Error updating available_count: ' . mysqli_error($con);
             }
@@ -42,4 +42,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_close($con);
 }
 ?>
-<a href="index.php" class="btn btn-primary">Go Back to Homepage</a>
+<a href="index.php" class="btn btn-primary">Вернуться на стартовую страницу</a>

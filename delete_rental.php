@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['rental_id'])) {
             $updateCountQuery = "UPDATE cars SET available_count = available_count + 1 WHERE id = $carId";
 
             if (mysqli_query($con, $updateCountQuery)) {
-                echo "Rental successfully deleted, and available_count updated!";
+                echo "Аренда успешно удалена, а available_count обновлен!";
             } else {
                 echo "Error updating available_count: " . mysqli_error($con);
             }
@@ -44,4 +44,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['rental_id'])) {
     echo "Invalid request.";
 }
 ?>
-<a href="index.php" class="btn btn-primary">Go Back to Homepage</a>
+<a href="index.php" class="btn btn-primary">Вернуться на стартовую страницу</a>

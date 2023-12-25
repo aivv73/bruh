@@ -23,16 +23,16 @@ session_start();
 $role = $_SESSION['role'];
 if (isset($_SESSION['username']) and $role == 0)
     echo '            <div class="col-md-3 text-end">
-        <a href="logout.php" class="btn btn-danger">Sign Out</a>
+        <a href="logout.php" class="btn btn-danger">Выйти</a>
     </div>';
 else if (isset($_SESSION['username']) and $role == 1)
     echo '            <div class="col-md-3 text-end">
-        <a  href="add_car.php" class="btn btn-outline-primary">Manage Cars</a>
-        <a href="logout.php" class="btn btn-danger">Sign Out</a>
+        <a  href="add_car.php" class="btn btn-outline-primary">Управление автомобилями</a>
+        <a href="logout.php" class="btn btn-danger">Выйти</a>
     </div>';
 else
-    echo ' <div class="col-md-3 text-end"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal"> Login </button>
-         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal"> Sign Up </button>
+    echo ' <div class="col-md-3 text-end"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal"> Войти </button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal"> Зарегистрироваться </button>
         </div>'
     ?>
 
@@ -49,7 +49,7 @@ else
         $expiredResult = mysqli_query($con, $checkExpiredQuery);
 
         if ($expiredResult && mysqli_num_rows($expiredResult) > 0) {
-            echo '<div class="alert alert-warning" role="alert">You have expired rentals. Please check your rental history.</div>';
+            echo '<div class="alert alert-warning" role="alert">У вас истек срок аренды. Пожалуйста, проверьте историю аренды.</div>';
         }
 
         if (isset($_SESSION['username']) and ($role == 0)) {
@@ -58,61 +58,60 @@ else
                 <!-- Your form fields here -->
 
                 <div class="container mt-5">
-    <form action="rental_process.php" method="post">
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="pickupLocation" class="form-label">Pick-up Location:</label>
-                <input type="text" class="form-control" id="pickupLocation" name="pickupLocation" required>
-                <div class="invalid-feedback">
-                    Valid Pick-up location is required.
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="differentDropoff" class="form-check-label">Specify Different Drop-off Location</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1" id="differentDropoff" name="differentDropoff">
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-3" id="differentDropoffLocation" style="display: none;">
-                <label for="dropoffLocation" class="form-label">Different Drop-off Location:</label>
-                <input type="text" class="form-control" id="dropoffLocation" name="dropoffLocation">
+                <form action="rental_process.php" method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="pickupLocation" class="form-label">Место получения:</label>
+            <input type="text" class="form-control" id="pickupLocation" name="pickupLocation" required>
+            <div class="invalid-feedback">
+                Требуется указать допустимое место получения.
             </div>
         </div>
 
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="pickupDateTime" class="form-label">Pick-up Date and Time:</label>
-                <input type="datetime-local" class="form-control" id="pickupDateTime" name="pickupDateTime" required>
-            </div>
-            
-            <script>
-                // Get the current date and time in the format required by datetime-local input
-                var currentDate = new Date().toISOString().slice(0, 16);
-
-                // Set the min attribute of the pickupDateTime input to the current date and time
-                document.getElementById('pickupDateTime').min = currentDate;
-
-                // Add an event listener to pickupDateTime to update dropoffDateTime min attribute
-                document.getElementById('pickupDateTime').addEventListener('input', function() {
-                    // Get the selected date and time from pickupDateTime
-                    var selectedDateTime = document.getElementById('pickupDateTime').value;
-
-                    // Set the min attribute of dropoffDateTime to the selected date and time from pickupDateTime
-                    document.getElementById('dropoffDateTime').min = selectedDateTime;
-                });
-            </script>
-
-            <div class="col-md-6 mb-3">
-                <label for="dropoffDateTime" class="form-label">Drop-off Date and Time:</label>
-                <input type="datetime-local" class="form-control" id="dropoffDateTime" name="dropoffDateTime" required>
+        <div class="col-md-6 mb-3">
+            <label for="differentDropoff" class="form-check-label">Указать другое место возврата</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="1" id="differentDropoff" name="differentDropoff">
             </div>
         </div>
 
-        <button class="btn btn-primary btn-lg" type="submit">Next: Choose a Car</button>
-    </form>
+        <div class="col-md-6 mb-3" id="differentDropoffLocation" style="display: none;">
+            <label for="dropoffLocation" class="form-label">Место возврата:</label>
+            <input type="text" class="form-control" id="dropoffLocation" name="dropoffLocation">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="pickupDateTime" class="form-label">Дата и время получения:</label>
+            <input type="datetime-local" class="form-control" id="pickupDateTime" name="pickupDateTime" required>
+        </div>
+
+        <script>
+            // Получить текущую дату и время в формате, необходимом для ввода datetime-local
+            var currentDate = new Date().toISOString().slice(0, 16);
+
+            // Установить атрибут min для ввода pickupDateTime в текущую дату и время
+            document.getElementById('pickupDateTime').min = currentDate;
+
+            // Добавить прослушиватель событий pickupDateTime для обновления атрибута min у dropoffDateTime
+            document.getElementById('pickupDateTime').addEventListener('input', function() {
+                // Получить выбранную дату и время из pickupDateTime
+                var selectedDateTime = document.getElementById('pickupDateTime').value;
+
+                // Установить атрибут min у dropoffDateTime в выбранную дату и время из pickupDateTime
+                document.getElementById('dropoffDateTime').min = selectedDateTime;
+            });
+        </script>
+
+        <div class="col-md-6 mb-3">
+            <label for="dropoffDateTime" class="form-label">Дата и время возврата:</label>
+            <input type="datetime-local" class="form-control" id="dropoffDateTime" name="dropoffDateTime" required>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-lg" type="submit">Далее: Выбрать автомобиль</button>
+</form>
 </div>
 
 <script>
@@ -136,7 +135,7 @@ else
 
             <?php
         } else if (!isset($_SESSION['username'])) {
-            echo '<p>Please log in to access the car rental form.</p>';
+            echo '<p>Пожалуйста войдите что бы увидеть форму аренды.</p>';
         }
                     ?>
                 <?php
@@ -196,23 +195,23 @@ else
                                     echo '<div class="card mt-3 ' . $cardClass . '">';
                                     echo '<div class="card-body ">';
                                     
-                                    echo '<h5 class="card-title">Rental Details</h5>';
+                                    echo '<h5 class="card-title">Подробности аренды</h5>';
                                     echo '<ul class="list-group list-group-flush ">';
-                                    echo "<li class='list-group-item " . $liClass . "'>Status: {$rental['status']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Username: {$rental['username']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Pickup location: {$rental['pickup_location']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Dropoff location: {$rental['dropoff_location']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Pickup date and time: {$rental['pickup_datetime']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Car name: {$rental['car_name']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Rental days: {$rental['rental_days']}</li>";
-                                    echo "<li class='list-group-item " . $liClass . "'>Total rent cost: \${$total_rent_cost}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Состояние: {$rental['status']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Имя пользователя: {$rental['username']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Место получения: {$rental['pickup_location']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Место возврата: {$rental['dropoff_location']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Дата и время получения: {$rental['pickup_datetime']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Дата и время возврата: {$rental['dropoff_datetime']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Название авто: {$rental['car_name']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Дней аренды: {$rental['rental_days']}</li>";
+                                    echo "<li class='list-group-item " . $liClass . "'>Общая стоимость аренды: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
                                     // Assuming $rental is your rental data
                                     if ($rental['status'] != 'returned') {
                                         echo '<button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#markReturnedModal' . $rental['id'] . '">';
-                                        echo 'Mark as Returned';
+                                        echo ' Пометить машину как возвращённую';
                                         echo '</button>';
                                     
                                         // Modal for each rental
@@ -220,17 +219,17 @@ else
                                         echo '<div class="modal-dialog">';
                                         echo '<div class="modal-content">';
                                         echo '<div class="modal-header">';
-                                        echo '<h5 class="modal-title" id="markReturnedModalLabel' . $rental['id'] . '">Mark Rental as Returned</h5>';
+                                        echo '<h5 class="modal-title" id="markReturnedModalLabel' . $rental['id'] . '">Пометить машину как возвращённую</h5>';
                                         echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
                                         echo '</div>';
                                         echo '<div class="modal-body">';
-                                        echo '<p>Are you sure you want to mark this rental as returned?</p>';
+                                        echo '<p>Вы увренны что хотите пометить машину как возвращённую.</p>';
                                         echo '</div>';
                                         echo '<div class="modal-footer">';
-                                        echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
+                                        echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>';
                                         echo '<form action="update_status.php" method="post">';
                                         echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
-                                        echo '<button type="submit" class="btn btn-primary">Mark as Returned</button>';
+                                        echo '<button type="submit" class="btn btn-primary">Пометить машину как возвращённую.</button>';
                                         echo '</form>';
                                         echo '</div>';
                                         echo '</div>';
@@ -239,23 +238,23 @@ else
                                     }
                                     
                                     // Button to delete the rental
-                                    echo '<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Rental</button>';
+                                    echo '<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить аренду</button>';
                                     // Delete Modal
                                     echo '<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">';
                                     echo '<div class="modal-dialog">';
                                     echo '<div class="modal-content">';
                                     echo '<div class="modal-header">';
-                                    echo '<h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>';
+                                    echo '<h5 class="modal-title" id="deleteModalLabel">Подтвердить</h5>';
                                     echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
                                     echo '</div>';
                                     echo '<div class="modal-body">';
-                                    echo '<p>Are you sure you want to delete this rental?</p>';
+                                    echo '<p>Вы уверены, что хотите удалить эту аренду?</p>';
                                     echo '</div>';
                                     echo '<div class="modal-footer">';
-                                    echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
+                                    echo '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>';
                                     echo '<form action="delete_rental.php" method="post">';
                                     echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
-                                    echo '<button type="submit" class="btn btn-danger">Delete Rental</button>';
+                                    echo '<button type="submit" class="btn btn-danger">Удалить аренду</button>';
                                     echo '</form>';
                                     echo '</div>';
                                     echo '</div>';
@@ -295,7 +294,7 @@ else
                                 $rentals = mysqli_fetch_all($joinResult, MYSQLI_ASSOC);
 
                                 echo '<div class="container mt-4">';
-                                echo '<h3>Rental History:</h3>';
+                                echo '<h3>Ваши аренды:</h3>';
 
                                 // Separate rentals based on status
                                 $expiredRentals = [];
@@ -337,16 +336,16 @@ else
                                         echo '</div>';
                                     }
                                     
-                                    echo '<h5 class="card-title">Rental Details</h5>';
+                                    echo '<h5 class="card-title">Подробности аренды</h5>';
                                     echo '<ul class="list-group list-group-flush">';
-                                    echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
-                                    echo "<li class='list-group-item'>Pickup location: {$rental['pickup_location']}</li>";
-                                    echo "<li class='list-group-item'>Dropoff location: {$rental['dropoff_location']}</li>";
-                                    echo "<li class='list-group-item'>Pickup date and time: {$rental['pickup_datetime']}</li>";
-                                    echo "<li class='list-group-item'>Dropoff date and time: {$rental['dropoff_datetime']}</li>";
-                                    echo "<li class='list-group-item'>Car name: {$rental['car_name']}</li>";
-                                    echo "<li class='list-group-item'>Rental days: {$rental['rental_days']}</li>";
-                                    echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
+                                    echo "<li class='list-group-item'>Состояние: {$rental['status']}</li>";
+                                    echo "<li class='list-group-item'>Место получения: {$rental['pickup_location']}</li>";
+                                    echo "<li class='list-group-item'>Место возврата: {$rental['dropoff_location']}</li>";
+                                    echo "<li class='list-group-item'>Дата и время получения:  {$rental['pickup_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Дата и время возврата: {$rental['dropoff_datetime']}</li>";
+                                    echo "<li class='list-group-item'>Название авто: {$rental['car_name']}</li>";
+                                    echo "<li class='list-group-item'>Дней аренды: {$rental['rental_days']}</li>";
+                                    echo "<li class='list-group-item'>Общая стоимость аренды: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
                                     echo '</div>';
@@ -373,7 +372,7 @@ else
         <footer class="py-3 my-4">
             <ul class="nav justify-content-center border-bottom pb-3 mb-3">
             </ul>
-            <p class="text-center text-body-secondary">© 2023 Company, Inc</p>
+            <p class="text-center text-body-secondary">© 2023 Joeyy car rent</p>
         </footer>
     </div>
     
@@ -381,7 +380,7 @@ else
     <div class="modal-dialog" role="document">
         <div class="modal-content rounded-4 shadow">
         <div class="modal-header p-5 pb-4 border-bottom-0">
-            <h1 class="fw-bold mb-0 fs-2">Login</h1>
+            <h1 class="fw-bold mb-0 fs-2">Войти</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -389,13 +388,13 @@ else
             <form action="login_process.php" method="post">
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="Username" required>
-                <label for="floatingInput">Username</label>
+                <label for="floatingInput">Имя пользователя</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control rounded-3"  id="password" name="password" placeholder="Password" required>
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword">Пароль</label>
             </div>
-            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Login</button>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Войти</button>
             </form>
         </div>
         </div>
@@ -406,7 +405,7 @@ else
     <div class="modal-dialog" role="document">
         <div class="modal-content rounded-4 shadow">
         <div class="modal-header p-5 pb-4 border-bottom-0">
-            <h1 class="fw-bold mb-0 fs-2">Sign Up</h1>
+            <h1 class="fw-bold mb-0 fs-2">Регистрация</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -414,17 +413,17 @@ else
             <form action="register_process.php" method="post">
             <div class="form-floating mb-3">
                 <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="Username" required>
-                <label for="floatingInput">Username</label>
+                <label for="floatingInput">Имя пользователя</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control rounded-3"  id="password" name="password" placeholder="Password" required>
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword">Пароль</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control rounded-3"  id="confirm_password" name="confirm_password" placeholder="Password" required>
-                <label for="floatingPassword">Confirm Password</label>
+                <label for="floatingPassword">Потвердите пароль</label>
             </div>
-            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign Up</button>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Зарегистрироваться</button>
             </form>
         </div>
         </div>
