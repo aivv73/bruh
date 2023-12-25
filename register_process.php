@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate password match
     if ($password !== $confirm_password) {
-        header('Location: register.html?error=1');
+        header('Location: index.php?error=1');
         exit ();
     }
 
@@ -28,16 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($result) {
         // Registration successful, redirect to the login page
-        header('Location: login.html');
+        header('Location: index.php');
         exit ();
     } else {
         // Registration failed, redirect back to the registration page with an error message
-        header('Location: register.html?error=2');
+        header('Location: index.php?error=2');
         exit ();
     }
 } else {
     // If the form is not submitted, redirect to the registration page
-    header('Location: register.html');
+    header('Location: index.php');
     exit ();
 }
 ?>

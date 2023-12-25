@@ -31,9 +31,8 @@ else if (isset($_SESSION['username']) and $role == 1)
         <a href="logout.php" class="btn btn-danger">Sign Out</a>
     </div>';
 else
-    echo '            <div class="col-md-3 text-end">
-            <a  href="login.html" class="btn btn-outline-primary me-2">Login</a>
-            <a  href="register.html" class="btn btn-primary">Sign-up</a>
+    echo ' <div class="col-md-3 text-end"> <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal"> Login </button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal"> Sign Up </button>
         </div>'
     ?>
 
@@ -297,5 +296,60 @@ else
         </footer>
     </div>
     
+    <div class="modal fade modal-sheet p-4 py-md-5" tabindex="-1" role="dialog" id="loginModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+        <div class="modal-header p-5 pb-4 border-bottom-0">
+            <h1 class="fw-bold mb-0 fs-2">Login</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-5 pt-0">
+            <form action="login_process.php" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="Username" required>
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3"  id="password" name="password" placeholder="Password" required>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Login</button>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="modal fade modal-sheet p-4 py-md-5" tabindex="-1" role="dialog" id="signupModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+        <div class="modal-header p-5 pb-4 border-bottom-0">
+            <h1 class="fw-bold mb-0 fs-2">Sign Up</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-5 pt-0">
+            <form action="register_process.php" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="Username" required>
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3"  id="password" name="password" placeholder="Password" required>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3"  id="confirm_password" name="confirm_password" placeholder="Password" required>
+                <label for="floatingPassword">Confirm Password</label>
+            </div>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign Up</button>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
     </body>
 </html>
