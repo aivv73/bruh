@@ -163,7 +163,7 @@ else
                             if ($joinResult) {
                                 // Fetch the results as an associative array
                                 $rentals = mysqli_fetch_all($joinResult, MYSQLI_ASSOC);
-
+                                        
                                 echo '<div class="container mt-4">';
                                 echo '<h3>Rental History:</h3>';
                                 foreach ($rentals as $rental) {
@@ -171,7 +171,7 @@ else
 
                                     echo '<div class="card mt-3">';
                                     echo '<div class="card-body">';
-
+                                    
                                     echo '<h5 class="card-title">Rental Details</h5>';
                                     echo '<ul class="list-group list-group-flush">';
                                     echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
@@ -252,10 +252,22 @@ else
                                 echo '<h3>Rental History:</h3>';
                                 foreach ($rentals as $rental) {
                                     $total_rent_cost = $rental['rental_days'] * $rental['rental_rate'];
+                                    $isExpired = ($rental['status'] === 'expired');
 
+                                    $alertClass = $isExpired ? 'alert-danger' : 'alert-primary';
+                                
                                     echo '<div class="card mt-3">';
                                     echo '<div class="card-body">';
 
+                                    echo '<h5 class="card-title">' . $alertMessage . '</h5>';
+    
+                                    // Display an alert for expired rentals
+                                    if ($isExpired) {
+                                        echo '<div class="alert ' . $alertClass . '" role="alert">';
+                                        echo 'This rental has expired. Please return the car.';
+                                        echo '</div>';
+                                    }
+                                    
                                     echo '<h5 class="card-title">Rental Details</h5>';
                                     echo '<ul class="list-group list-group-flush">';
                                     echo "<li class='list-group-item'>Status: {$rental['status']}</li>";
