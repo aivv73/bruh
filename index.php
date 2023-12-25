@@ -27,7 +27,7 @@ if (isset($_SESSION['username']) and $role == 0)
     </div>';
 else if (isset($_SESSION['username']) and $role == 1)
     echo '            <div class="col-md-3 text-end">
-        <a  href="add_car.php" class="btn btn-outline-primary">Add New Car</a>
+        <a  href="add_car.php" class="btn btn-outline-primary">Manage Cars</a>
         <a href="logout.php" class="btn btn-danger">Sign Out</a>
     </div>';
 else

@@ -39,18 +39,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['username'])) {
                         VALUES ('{$_SESSION['username']}', '$pickupLocation', '$dropoffLocation', FROM_UNIXTIME($pickupDateTime), FROM_UNIXTIME($dropoffDateTime), $carID, '$differentDropoff', $rentalDays)";
 
         if (mysqli_query($con, $insertQuery)) {
-            echo 'Rental information successfully submitted!';
-            echo 'Total rent cost: $' . $totalRentCost . '<br>';
+            // Update available_count in the cars table
+            $updateCountQuery = "UPDATE cars SET available_count = available_count - 1 WHERE id = $carID";
+
+            if (mysqli_query($con, $updateCountQuery)) {
+                echo 'Rental information successfully submitted!';
+                echo 'Total rent cost: $' . $totalRentCost . '<br>';
+            } else {
+                echo 'Error updating available_count: ' . mysqli_error($con);
+            }
         } else {
-            echo 'Error: ' . mysqli_error($con);
+            echo 'Error inserting rental information: ' . mysqli_error($con);
         }
 
         // Close the result set
         mysqli_free_result($carIDResult);
     } else {
         // Display an error message if the query failed
-        echo 'Error: ' . mysqli_error($con);
+        echo 'Error getting car ID: ' . mysqli_error($con);
     }
+
 
     // Close the database connection
     mysqli_close($con);
