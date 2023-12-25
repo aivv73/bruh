@@ -18,11 +18,25 @@
             <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <div class="col-md-3 mb-2 mb-md-0">
             </div>
+<?php
+session_start();
+$role = $_SESSION['role'];
+if (isset($_SESSION['username']) and $role == 0)
+    echo '            <div class="col-md-3 text-end">
+        <a href="logout.php" class="btn btn-danger">Sign Out</a>
+    </div>';
+else if (isset($_SESSION['username']) and $role == 1)
+    echo '            <div class="col-md-3 text-end">
+        <a  href="add_car.php" class="btn btn-outline-primary">Add New Car</a>
+        <a href="logout.php" class="btn btn-danger">Sign Out</a>
+    </div>';
+else
+    echo '            <div class="col-md-3 text-end">
+            <a  href="login.html" class="btn btn-outline-primary me-2">Login</a>
+            <a  href="register.html" class="btn btn-primary">Sign-up</a>
+        </div>'
+    ?>
 
-            <div class="col-md-3 text-end">
-                <a  href="login.html" class="btn btn-outline-primary me-2">Login</a>
-                <a  href="register.html" class="btn btn-primary">Sign-up</a>
-            </div>
             </header>
         </div>
     <?php
@@ -68,11 +82,29 @@
             </div>
         </div>
 
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="pickupDateTime" class="form-label">Pick-up Date and Time:</label>
                 <input type="datetime-local" class="form-control" id="pickupDateTime" name="pickupDateTime" required>
             </div>
+            
+            <script>
+                // Get the current date and time in the format required by datetime-local input
+                var currentDate = new Date().toISOString().slice(0, 16);
+
+                // Set the min attribute of the pickupDateTime input to the current date and time
+                document.getElementById('pickupDateTime').min = currentDate;
+
+                // Add an event listener to pickupDateTime to update dropoffDateTime min attribute
+                document.getElementById('pickupDateTime').addEventListener('input', function() {
+                    // Get the selected date and time from pickupDateTime
+                    var selectedDateTime = document.getElementById('pickupDateTime').value;
+
+                    // Set the min attribute of dropoffDateTime to the selected date and time from pickupDateTime
+                    document.getElementById('dropoffDateTime').min = selectedDateTime;
+                });
+            </script>
 
             <div class="col-md-6 mb-3">
                 <label for="dropoffDateTime" class="form-label">Drop-off Date and Time:</label>
@@ -111,8 +143,6 @@
                 <?php
                     // Include your database connection code
                     include ('connection.php');
-
-
 
                     // Check if the role is equal to 1.
                     if (isset($_SESSION['username']) and $role == 1) {
@@ -156,14 +186,13 @@
                                     echo "<li class='list-group-item'>Total rent cost: \${$total_rent_cost}</li>";
                                     echo '</ul>';
 
-
                                     if ($rental['status'] != 'returned') {
                                         // Button to mark the rental as returned
                                         echo '<form action="update_status.php" method="post" class="mt-3">';
                                         echo '<input type="hidden" name="rental_id" value="' . $rental['id'] . '">';
                                         echo '<button type="submit" class="btn btn-primary">Mark as Returned</button>';
                                         echo '</form>';
-                                    } 
+                                    }
                                     // Button to delete the rental
                                     echo '<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Rental</button>';
                                     // Delete Modal
