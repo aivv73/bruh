@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit ();
     } else {
         // Handle unsuccessful login
-        header('Location: index.html?error=1');
+        header('Location: index.php?error=1');
         exit ();
     }
 } else {
     // If the form is not submitted, redirect to the login page
-    header('Location: index.html');
+    header('Location: index.php');
     exit ();
 }
 ?>

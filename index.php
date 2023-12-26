@@ -332,7 +332,7 @@ else
                                     // Display an alert for expired rentals
                                     if ($isExpired) {
                                         echo '<div class="alert ' . $alertClass . '" role="alert">';
-                                        echo 'This rental has expired. Please return the car.';
+                                        echo 'Срок аренды истек. Пожалуйста, верните автомобиль.';
                                         echo '</div>';
                                     }
                                     
