@@ -55,8 +55,6 @@ else
         if (isset($_SESSION['username']) and ($role == 0)) {
             ?>
             <form action="car_selection.php" method="post">
-                <!-- Your form fields here -->
-
                 <div class="container mt-5">
                 <form action="rental_process.php" method="post">
     <div class="row">
